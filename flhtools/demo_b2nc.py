@@ -4,7 +4,7 @@ Python script to create a netcdf file for an analytical magnetic field.
 anthony.yeates@durham.ac.uk
 """
 import numpy as np
-from scipy.io import netcdf
+from scipy.io import netcdf_file
 
 # "Hesse" field:
 
@@ -29,7 +29,7 @@ z, y, x = np.meshgrid(z1, y1, x1, indexing='ij')
 
 # Write to netcdf file:
 fname = 'bhesse.nc'
-f = netcdf.netcdf_file(fname, 'w')
+f = netcdf_file(fname, 'w')
 f.createDimension('xdim', nx)
 f.createDimension('ydim', ny)
 f.createDimension('zdim', nz)
