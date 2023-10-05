@@ -298,14 +298,12 @@ class NumpyDataModule(SlicesDataModule):
         super().__init__(b_slices, *args, **kwargs)
 
 
-from nf2.data.isee import nlfff
+from nf2.data.isee import load_nc
 
 class ISEEDataModule(SlicesDataModule):
 
     def __init__(self, data_path, slices=None, bin=1, use_bz=False, components=False, *args, **kwargs):
-        data = nlfff(data_path)
-        b = np.stack([data.bx, data.by, data.bz], -1)
-        b_slices = np.array(b)
+        b_slices = load_nc(data_path)
         if slices:
             b_slices = b_slices[:, :, slices]
         if bin > 1:

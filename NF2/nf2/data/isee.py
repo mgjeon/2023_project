@@ -102,3 +102,9 @@ class nlfff:
             ax3.set_ylabel('y [Mm]')
             
             plt.pause(0.1)
+
+def load_nc(nc_file):
+      data = nlfff(nc_file)
+      b = np.stack([data.bx, data.by, data.bz], -1)
+      b = np.array(b)
+      return b
