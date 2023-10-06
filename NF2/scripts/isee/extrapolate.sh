@@ -1,1 +1,1 @@
-python3 -m nf2.extrapolate --config /userhome/jeon_mg/workspace/project/NF2/config/isee_noaa_12673.json
+CUDA_VISIBLE_DEVICES=3 python3 -m nf2.extrapolate --config /userhome/jeon_mg/workspace/project/NF2/config/isee_noaa_12673.json

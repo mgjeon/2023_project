@@ -1,0 +1,58 @@
+import numpy as np
+
+def vector_norm(vector):
+    return np.linalg.norm(vector, axis=-1)
+
+def dot_product(a, b):
+    return (a*b).sum(-1)
+
+
+def metric(b, B):
+    # b : model solution
+    # B : reference magnetic field
+    eps = 1e-7
+
+    result = {}
+
+    result['c_vec'] = np.sum(dot_product(B, b)) / np.sqrt(np.sum(vector_norm(B)**2) * np.sum(vector_norm(b)**2))
+    
+    M = np.prod(B.shape[:-1])
+    nu = dot_product(B, b)
+    de = vector_norm(B) * vector_norm(b)
+    result['c_cs'] = (1 / M) * np.sum(np.divide(nu, de, where=de!=0.))
+
+    E_n = np.sum(vector_norm(b - B)) / np.sum(vector_norm(B))
+    result["E_n'"] = 1 - E_n
+    
+    nu = vector_norm(b - B)
+    de = vector_norm(B)
+    E_m = (1 / M) * np.sum(np.divide(nu, de, where=de!=0.))
+    result["E_m'"] = 1 - E_m
+
+    result['eps'] = np.sum(vector_norm(b)**2) / np.sum(vector_norm(B)**2)
+
+    return result
+
+import matplotlib.pyplot as plt 
+
+def plot_overview(b, B, z=0, b_norm=2500):
+    fig, axs = plt.subplots(2, 3, figsize=(12, 4))
+
+    ax = axs[0]
+    ax[0].imshow(b[..., z, 0].transpose(), vmin=-b_norm, vmax=b_norm, cmap='gray', origin='lower')
+    ax[0].set_title('bx')
+    ax[1].imshow(b[..., z, 1].transpose(), vmin=-b_norm, vmax=b_norm, cmap='gray', origin='lower')
+    ax[1].set_title('by')
+    ax[2].imshow(b[..., z, 2].transpose(), vmin=-b_norm, vmax=b_norm, cmap='gray', origin='lower')
+    ax[2].set_title('bz')
+
+    ax = axs[1]
+    ax[0].imshow(B[..., z, 0].transpose(), vmin=-b_norm, vmax=b_norm, cmap='gray', origin='lower')
+    ax[0].set_title('Bx')
+    ax[1].imshow(B[..., z, 1].transpose(), vmin=-b_norm, vmax=b_norm, cmap='gray', origin='lower')
+    ax[1].set_title('By')
+    ax[2].imshow(B[..., z, 2].transpose(), vmin=-b_norm, vmax=b_norm, cmap='gray', origin='lower')
+    ax[2].set_title('Bz')
+
+    plt.tight_layout()
+    plt.show()
