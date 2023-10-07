@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=3 python3 -m nnf2.initialization --config /userhome/jeon_mg/workspace/project/NF2_re/config/isee_noaa_12673_initialize.json

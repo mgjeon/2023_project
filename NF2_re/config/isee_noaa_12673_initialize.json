@@ -1,9 +1,9 @@
 {
-    "base_path": "/userhome/jeon_mg/workspace/__data/isee/noaa_12673/20170906_083600_initialize",
+    "base_path": "/userhome/jeon_mg/workspace/_data/isee/noaa_12673/20170906_083600_initialize",
     
     "logging": {
       "wandb_entity": "mgjeon",
-      "wandb_project": "isee2",
+      "wandb_project": "isee",
       "wandb_name": "noaa_12673_20170906_083600_initialize",
       "wandb_id": null
     },
@@ -14,8 +14,8 @@
       "b_norm": 2500,
       "spatial_norm": 320,
       "batch_size": 3e4,
-      "iterations": 1e4,
-      "work_directory": "/userhome/jeon_mg/workspace/__data/_tmp/isee/noaa_12673/20170906_083600_initialize",
+      "iterations": 1e5,
+      "work_directory": "/userhome/jeon_mg/workspace/_data/_tmp/isee/noaa_12673/20170906_083600_initialize",
       "num_workers": 8
     },
   
@@ -26,7 +26,7 @@
     "training": {
       "initialization": true,
       "lambda_b": 1,
-      "lr_params": {"start": 5e-4, "end": 5e-5, "decay_iterations": 1e4},
+      "lr_params": {"start": 5e-4, "end": 5e-5, "decay_iterations": 1e5},
       "validation_interval": 1e3
     }
   }

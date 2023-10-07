@@ -53,7 +53,10 @@ validation_settings = {
     "Mm_per_ds": data_module.Mm_per_pixel * args.data["spatial_norm"],
 }
 
-meta_path = args.meta_path if args.meta_path else None
+try:
+    meta_path = args.meta_path if args.meta_path else None
+except AttributeError:
+    meta_path = None
 
 nf2 = NF2Module(validation_settings, meta_path=meta_path, **args.model, **args.training)
 
