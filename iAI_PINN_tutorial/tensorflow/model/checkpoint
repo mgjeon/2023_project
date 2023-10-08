@@ -1,0 +1,2 @@
+model_checkpoint_path: "pde_small-11727.ckpt"
+all_model_checkpoint_paths: "pde_small-11727.ckpt"
