@@ -1,0 +1,1 @@
+python -m nf2.data.download_full_disk --download_dir /mnt/obsdata/nf2/synoptic_maps --email "mgjeon@khu.ac.kr" --carrington_rotation 2266 --t_start "20230120T023600"

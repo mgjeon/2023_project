@@ -1,0 +1,1 @@
+CUDA_VISIBLE_DEVICES=2 python -m nf2.extrapolate --config /userhome/jeon_mg/workspace/project/NF2_global/config/fd_2266.json
