@@ -57,21 +57,22 @@ def plot_overview(b, B, z=0, b_norm=2500):
     plt.tight_layout()
     plt.show()
 
-def plot_sample(b, B, n_samples=10):
-    def plot_s(mag, title):
-        fig, axs = plt.subplots(3, n_samples, figsize=(n_samples * 4, 12))
-        heights = np.linspace(0, 1, n_samples) ** 2 * (mag.shape[2] - 1)  # more samples from lower heights
-        heights = heights.astype(np.int32)
-        for i in range(3):
-            for j, h in enumerate(heights):
-                v_min_max = np.max(np.abs(mag[:, :, h, i]))
-                axs[i, j].imshow(mag[:, :, h, i].transpose(), cmap='gray', vmin=-v_min_max, vmax=v_min_max,
-                                origin='lower')
-                axs[i, j].set_axis_off()
+def plot_s(mag, title, n_samples):
+    fig, axs = plt.subplots(3, n_samples, figsize=(n_samples * 4, 12))
+    heights = np.linspace(0, 1, n_samples) ** 2 * (mag.shape[2] - 1)  # more samples from lower heights
+    heights = heights.astype(np.int32)
+    for i in range(3):
         for j, h in enumerate(heights):
-            axs[0, j].set_title('%.01f' % h)
-        fig.tight_layout()
-        fig.suptitle(title, fontsize=25)
-        plt.show()
-    plot_s(b, 'b')
-    plot_s(B, 'B')
+            v_min_max = np.max(np.abs(mag[:, :, h, i]))
+            axs[i, j].imshow(mag[:, :, h, i].transpose(), cmap='gray', vmin=-v_min_max, vmax=v_min_max,
+                            origin='lower')
+            axs[i, j].set_axis_off()
+    for j, h in enumerate(heights):
+        axs[0, j].set_title('%.01f' % h)
+    fig.tight_layout()
+    fig.suptitle(title, fontsize=25)
+    plt.show()
+
+def plot_sample(b, B, n_samples=10):
+    plot_s(b, 'b', n_samples)
+    plot_s(B, 'B', n_samples)
