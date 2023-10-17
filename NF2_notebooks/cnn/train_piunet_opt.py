@@ -4,7 +4,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 import torch
 # from torch import nn
 from torch.optim import Adam
-# from torch.optim.lr_scheduler import ExponentialLR
+from torch.optim.lr_scheduler import ExponentialLR
 from torch.utils.data import DataLoader, RandomSampler
 
 from tool.model import Unet
@@ -12,7 +12,7 @@ from tool.load import *
 from tool.evaluate import *
 from tool.dataset import *
 
-model_path = 'model_piunet_opt'
+model_path = 'model_piunet_opt_b3_elr'
 os.makedirs(model_path, exist_ok=True)
 
 # file_list = nc_list("/mnt/obsdata/isee_nlfff_v1.2/12673")
@@ -71,15 +71,17 @@ def criterion(outputs, labels):
 
     return loss_bc, loss_ff, loss_div
 
-# lr_start = 1e-3
-# lr_end = 1e-4
-# decay_iterations = 10000
+lr_start = 1e-4
+lr_end = 1e-5
+decay_iterations = 10000
 
-optimizer = Adam(model.parameters(), lr=1e-4)
-# scheduler = ExponentialLR(optimizer, gamma=gamma)
+gamma = (lr_end / lr_start) ** (1 / decay_iterations)
+
+optimizer = Adam(model.parameters(), lr=lr_start)
+scheduler = ExponentialLR(optimizer, gamma=gamma)
 
 import wandb
-wandb.init(project='cnn', entity='mgjeon', name='piunet_opt')
+wandb.init(project='cnn', entity='mgjeon', name='piunet_opt_b3_elr')
 model.train()
 # for epoch in range(iterations):
 for batch_idx, samples in enumerate(dataloaer):
@@ -95,9 +97,12 @@ for batch_idx, samples in enumerate(dataloaer):
     loss.backward()
     optimizer.step()
 
+    if scheduler.get_last_lr()[0] > lr_end:
+        scheduler.step()
+
     if (batch_idx+1) % 10 == 0:
         model.eval()
-        wandb.log({"loss": loss, "loss_bc":loss_bc, "loss_ff":loss_ff, "loss_div":loss_div})
+        wandb.log({"loss": loss, "loss_bc":loss_bc, "loss_ff":loss_ff, "loss_div":loss_div, "learning_rate": scheduler.get_last_lr()[0]})
         bb = outputs.cpu().detach().numpy()[0, ...].transpose(2, 1, 0, 3)
         BB = labels.cpu().detach().numpy()[0, ...].transpose(2, 1, 0, 3)
         zz = np.random.randint(low=0, high=49, size=1)[0]
