@@ -7,3 +7,4 @@ NF2_notebooks/**/model*/
 NF2_notebooks/**/*.dat
 **/wandb
 **/model*.pt
+*.nc
