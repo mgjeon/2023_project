@@ -4,6 +4,7 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 import torch
 from torch import nn
 from torch.optim import Adam
+from torch.optim.lr_scheduler import ExponentialLR
 from torch.utils.data import DataLoader, RandomSampler
 
 from tool.model import Unet
@@ -43,7 +44,14 @@ dataloaer = DataLoader(dataset, batch_size=None, num_workers=8, pin_memory=True,
 model = Unet().to('cuda')
 
 criterion = nn.MSELoss()
-optimizer = Adam(model.parameters(), lr=1e-3)
+lr_start = 1e-3
+lr_end = 1e-4
+decay_iterations = 10000
+
+gamma = (lr_end / lr_start) ** (1 / decay_iterations)
+
+optimizer = Adam(model.parameters(), lr=lr_start)
+scheduler = ExponentialLR(optimizer, gamma=gamma)
 
 import wandb
 wandb.init(project='cnn', entity='mgjeon', name='unet')
@@ -61,9 +69,12 @@ for batch_idx, samples in enumerate(dataloaer):
     loss.backward()
     optimizer.step()
 
+    if scheduler.get_last_lr()[0] > lr_end:
+        scheduler.step()
+
     if (batch_idx+1) % 10 == 0:
         model.eval()
-        wandb.log({"loss": loss})
+        wandb.log({"loss": loss, "learning_rate": scheduler.get_last_lr()[0]})
         bb = outputs.cpu().detach().numpy()[0, ...].transpose(2, 1, 0, 3)
         BB = labels.cpu().detach().numpy()[0, ...].transpose(2, 1, 0, 3)
         zz = np.random.randint(low=0, high=49, size=1)[0]

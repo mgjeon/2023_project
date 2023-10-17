@@ -21,7 +21,7 @@ def metric(b, B):
     nu = dot_product(B, b)
     de = vector_norm(B) * vector_norm(b)
     result['c_cs'] = (1 / M) * np.sum(np.divide(nu, de, where=de!=0.))
-    # result['c_cs'] = (1 / M) * np.sum(nu/(de + eps))
+    result['c_cs_ep'] = (1 / M) * np.sum(nu/(de + eps))
 
     E_n = np.sum(vector_norm(b - B)) / np.sum(vector_norm(B))
     result["E_n'"] = 1 - E_n
@@ -29,8 +29,9 @@ def metric(b, B):
     nu = vector_norm(b - B)
     de = vector_norm(B)
     E_m = (1 / M) * np.sum(np.divide(nu, de, where=de!=0.))
-    # E_m = (1 / M) * np.sum((nu/(de + eps)))
     result["E_m'"] = 1 - E_m
+    E_m = (1 / M) * np.sum((nu/(de + eps)))
+    result["E_m'_ep"] = 1 - E_m
 
     result['eps'] = np.sum(vector_norm(b)**2) / np.sum(vector_norm(B)**2)
 
