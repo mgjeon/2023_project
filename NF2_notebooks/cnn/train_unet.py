@@ -11,6 +11,9 @@ from tool.load import *
 from tool.evaluate import *
 from tool.dataset import *
 
+model_path = 'model_unet'
+os.makedirs(model_path, exist_ok=True)
+
 # file_list = nc_list("/mnt/obsdata/isee_nlfff_v1.2/12673")
 
 # from tqdm import tqdm
@@ -30,7 +33,7 @@ from tool.dataset import *
 
 batches_file_paths = {'inputs': 'inputs.npy', 'outputs':'outputs.npy'}
 
-batch_size = 1
+batch_size = 3
 iterations = 10000
 
 dataset = CustomDataset(batches_file_paths, batch_size=batch_size)
@@ -43,8 +46,7 @@ criterion = nn.MSELoss()
 optimizer = Adam(model.parameters(), lr=1e-3)
 
 import wandb
-wandb.init()
-wandb.watch(model, log_freq=10)
+wandb.init(project='cnn', entity='mgjeon', name='unet')
 model.train()
 # for epoch in range(iterations):
 for batch_idx, samples in enumerate(dataloaer):
@@ -62,13 +64,13 @@ for batch_idx, samples in enumerate(dataloaer):
     if (batch_idx+1) % 10 == 0:
         model.eval()
         wandb.log({"loss": loss})
-        bb = outputs.cpu().detach().numpy().squeeze().transpose(2, 1, 0, 3)
-        BB = labels.cpu().detach().numpy().squeeze().transpose(2, 1, 0, 3)
+        bb = outputs.cpu().detach().numpy()[0, ...].transpose(2, 1, 0, 3)
+        BB = labels.cpu().detach().numpy()[0, ...].transpose(2, 1, 0, 3)
         zz = np.random.randint(low=0, high=49, size=1)[0]
         b_norm = 1/zz if zz != 0 else 1
         fig = plot_overview(bb, BB, z=zz, b_norm=b_norm, ret=True)
         wandb.log({"img": fig})
     if (batch_idx+1) % 1000 == 0:
-        path = f"model/model_{batch_idx+1}.pt"
+        path = f"{model_path}/model_{batch_idx+1}.pt"
         torch.save({'epoch': batch_idx+1, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'loss':loss}, path)
 

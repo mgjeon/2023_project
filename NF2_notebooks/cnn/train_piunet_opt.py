@@ -1,5 +1,5 @@
 import os 
-os.environ['CUDA_VISIBLE_DEVICES'] = '2'
+os.environ['CUDA_VISIBLE_DEVICES'] = '3'
 
 import torch
 # from torch import nn
@@ -12,7 +12,7 @@ from tool.load import *
 from tool.evaluate import *
 from tool.dataset import *
 
-model_path = 'model_piunet'
+model_path = 'model_piunet_opt'
 os.makedirs(model_path, exist_ok=True)
 
 # file_list = nc_list("/mnt/obsdata/isee_nlfff_v1.2/12673")
@@ -62,7 +62,7 @@ def criterion(outputs, labels):
     j = torch.stack([jx, jy, jz], -1)
 
     jxb = torch.cross(j, b, -1)
-    loss_ff = (jxb**2).sum(-1)
+    loss_ff = (jxb**2).sum(-1) / ((b**2).sum(-1) + 1e-7)
     loss_ff = torch.mean(loss_ff)
 
     div_b = divergence(bx, by, bz, 1, 1, 1)
@@ -79,7 +79,7 @@ optimizer = Adam(model.parameters(), lr=1e-4)
 # scheduler = ExponentialLR(optimizer, gamma=gamma)
 
 import wandb
-wandb.init(project='cnn', entity='mgjeon', name='piunet')
+wandb.init(project='cnn', entity='mgjeon', name='piunet_opt')
 model.train()
 # for epoch in range(iterations):
 for batch_idx, samples in enumerate(dataloaer):

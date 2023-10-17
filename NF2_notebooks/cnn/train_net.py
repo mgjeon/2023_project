@@ -11,6 +11,9 @@ from tool.load import *
 from tool.evaluate import *
 from tool.dataset import *
 
+model_path = 'model_net'
+os.makedirs(model_path, exist_ok=True)
+
 # file_list = nc_list("/mnt/obsdata/isee_nlfff_v1.2/12673")
 
 # from tqdm import tqdm
@@ -67,6 +70,6 @@ for batch_idx, samples in enumerate(dataloaer):
         fig = plot_overview(bb, BB, b_norm=1, ret=True)
         wandb.log({"img": fig})
     if (batch_idx+1) % 1000 == 0:
-        path = f"model/model_{batch_idx+1}.pt"
+        path = f"{model_path}/model_{batch_idx+1}.pt"
         torch.save({'epoch': batch_idx+1, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'loss':loss}, path)
 
