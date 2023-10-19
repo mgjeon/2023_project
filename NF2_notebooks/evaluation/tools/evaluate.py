@@ -86,7 +86,7 @@ class evaluator:
         self.result = self._metric()
         print(self.result)
 
-        self._plot_overview(z=100, b_norm=100)
+        self._plot_overview(z=25, b_norm=100)
         self._plot_sample(n_samples=10)
 
     def _metric(self):

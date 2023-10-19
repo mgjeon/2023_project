@@ -12,7 +12,8 @@ from tool.load import *
 from tool.evaluate import *
 from tool.dataset import *
 
-model_path = 'model_piunet_opt_b3_elr'
+desc = 'piunet_opt_b3_elr_w10'
+model_path = f'model_{desc}'
 os.makedirs(model_path, exist_ok=True)
 
 # file_list = nc_list("/mnt/obsdata/isee_nlfff_v1.2/12673")
@@ -81,7 +82,7 @@ optimizer = Adam(model.parameters(), lr=lr_start)
 scheduler = ExponentialLR(optimizer, gamma=gamma)
 
 import wandb
-wandb.init(project='cnn', entity='mgjeon', name='piunet_opt_b3_elr')
+wandb.init(project='cnn', entity='mgjeon', name=desc)
 model.train()
 # for epoch in range(iterations):
 for batch_idx, samples in enumerate(dataloaer):
@@ -93,7 +94,7 @@ for batch_idx, samples in enumerate(dataloaer):
     optimizer.zero_grad()
     outputs = model(inputs)
     loss_bc, loss_ff, loss_div = criterion(outputs, labels)
-    loss = loss_bc + loss_ff + loss_div
+    loss = loss_bc + 10*loss_ff + 10*loss_div
     loss.backward()
     optimizer.step()
 

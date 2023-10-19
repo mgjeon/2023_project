@@ -12,7 +12,8 @@ from tool.load import *
 from tool.evaluate import *
 from tool.dataset import *
 
-model_path = 'model_unet_pi_b3_elr_w10'
+desc = 'unet_pi_b3_elr_w1000'
+model_path = f'model_{desc}'
 os.makedirs(model_path, exist_ok=True)
 
 # file_list = nc_list("/mnt/obsdata/isee_nlfff_v1.2/12673")
@@ -75,13 +76,16 @@ lr_start = 1e-4
 lr_end = 1e-5
 decay_iterations = 10000
 
+f = open(f'{model_path}/{lr_start}_{lr_end}_{decay_iterations}', 'w')
+f.close()
+
 gamma = (lr_end / lr_start) ** (1 / decay_iterations)
 
 optimizer = Adam(model.parameters(), lr=lr_start)
 scheduler = ExponentialLR(optimizer, gamma=gamma)
 
 import wandb
-wandb.init(project='cnn', entity='mgjeon', name='unet_pi_b3_elr_w10')
+wandb.init(project='cnn', entity='mgjeon', name=desc)
 model.train()
 # for epoch in range(iterations):
 for batch_idx, samples in enumerate(dataloaer):
@@ -93,7 +97,7 @@ for batch_idx, samples in enumerate(dataloaer):
     optimizer.zero_grad()
     outputs = model(inputs)
     loss_label, loss_ff, loss_div = criterion(outputs, labels)
-    loss = loss_label + 10*loss_ff + 10*loss_div
+    loss = loss_label + 1000*loss_ff + 1000*loss_div
     loss.backward()
     optimizer.step()
 
