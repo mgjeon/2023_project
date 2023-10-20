@@ -3,7 +3,7 @@
 **/*.npy
 **/*.npz
 iAI_PINN_tutorial/model/
-NF2_notebooks/**/model*/
+NF2_notebooks/**/*model*/
 NF2_notebooks/**/*.dat
 **/wandb
 **/model*.pt

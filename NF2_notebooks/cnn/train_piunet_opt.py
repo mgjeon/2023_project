@@ -12,7 +12,7 @@ from tool.load import *
 from tool.evaluate import *
 from tool.dataset import *
 
-desc = 'piunet_opt_b3_elr_w10'
+desc = 'piunet_opt_b3_elr'
 model_path = f'model_{desc}'
 os.makedirs(model_path, exist_ok=True)
 
@@ -40,7 +40,7 @@ iterations = 10000
 
 dataset = CustomDataset(batches_file_paths, batch_size=batch_size)
 dataloaer = DataLoader(dataset, batch_size=None, num_workers=8, pin_memory=True,
-                       sampler=RandomSampler(dataset, replacement=True, num_samples=iterations))
+                       sampler=RandomSampler(dataset, replacement=True, num_samples=iterations+1))
 
 model = Unet().to('cuda')
 
@@ -82,7 +82,7 @@ optimizer = Adam(model.parameters(), lr=lr_start)
 scheduler = ExponentialLR(optimizer, gamma=gamma)
 
 import wandb
-wandb.init(project='cnn', entity='mgjeon', name=desc)
+wandb.init(project='cnn_2', entity='mgjeon', name=desc)
 model.train()
 # for epoch in range(iterations):
 for batch_idx, samples in enumerate(dataloaer):
@@ -94,23 +94,23 @@ for batch_idx, samples in enumerate(dataloaer):
     optimizer.zero_grad()
     outputs = model(inputs)
     loss_bc, loss_ff, loss_div = criterion(outputs, labels)
-    loss = loss_bc + 10*loss_ff + 10*loss_div
+    loss = loss_bc + loss_ff + loss_div
     loss.backward()
     optimizer.step()
 
     if scheduler.get_last_lr()[0] > lr_end:
         scheduler.step()
 
-    if (batch_idx+1) % 10 == 0:
+    if batch_idx % 10 == 0:
         model.eval()
-        wandb.log({"loss": loss, "loss_bc":loss_bc, "loss_ff":loss_ff, "loss_div":loss_div, "learning_rate": scheduler.get_last_lr()[0]})
+        wandb.log({"loss": loss, "loss_bc":loss_bc, "loss_ff":loss_ff, "loss_div":loss_div, "learning_rate": scheduler.get_last_lr()[0]}, step=batch_idx)
         bb = outputs.cpu().detach().numpy()[0, ...].transpose(2, 1, 0, 3)
         BB = labels.cpu().detach().numpy()[0, ...].transpose(2, 1, 0, 3)
         zz = np.random.randint(low=0, high=49, size=1)[0]
         b_norm = 1/zz if zz != 0 else 1
         fig = plot_overview(bb, BB, z=zz, b_norm=b_norm, ret=True)
         wandb.log({"img": fig})
-    if (batch_idx+1) % 1000 == 0:
-        path = f"{model_path}/model_{batch_idx+1}.pt"
+    if batch_idx % 1000 == 0:
+        path = f"{model_path}/model_{batch_idx}.pt"
         torch.save({'epoch': batch_idx+1, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optimizer.state_dict(), 'loss':loss}, path)
 

@@ -47,6 +47,10 @@ class net(nn.Module):
     
 
 class Unet(nn.Module):
+    """
+    input : [batch_size, 1, Ny, Nx, 3]
+    output: [batch_size, Nz, Ny, Nz, 3]
+    """
     def __init__(self):
         super().__init__()
         self.maxpool = nn.MaxPool3d(kernel_size=(2, 2, 1))
