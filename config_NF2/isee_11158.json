@@ -1,0 +1,40 @@
+{
+    "base_path": "/userhome/jeon_mg/workspace/_data/nf2_isee/11158_input_0",
+    "logging": {
+      "wandb_entity": "mgjeon",
+      "wandb_project": "nf2_isee",
+      "wandb_name": "11158_input_0",
+      "wandb_id": null
+    },
+    
+    "data": {
+      "type": "numpy",
+      "data_path": "/userhome/jeon_mg/workspace/project/CNN_NF2/NF2_compare/data/11158/input_0.npy",
+      "slices": [0],
+      "height_mapping": {
+        "z":  [0.0]
+      },
+      "Mm_per_pixel": 1,
+      "boundary": {"type":  "potential", "strides": 4},
+      "height": 50,
+      "b_norm": 2500,
+      "spatial_norm": 320,
+      "batch_size": {"boundary":  1e4, "random":  2e4},
+      "iterations": 1e5,
+      "work_directory": "/userhome/jeon_mg/workspace/_data/tmp/nf2_isee/11158_input_0",
+      "num_workers": 8
+    },
+  
+    "model": {
+      "dim": 256,
+      "use_height_mapping": false
+    },
+  
+    "training": {
+      "lambda_b": {"start": 1e3, "end": 1, "iterations" : 1e5},
+      "lambda_div": 1e-1,
+      "lambda_ff": 1e-1,
+      "validation_interval": 1e4,
+      "lr_params": {"start": 5e-4, "end": 5e-5, "decay_iterations": 1e5}
+    }
+  }
