@@ -9,7 +9,7 @@
     
     "data": {
       "type": "numpy",
-      "data_path": "/userhome/jeon_mg/workspace/project/CNN_NF2/NF2_compare/data/11158/input_0.npy",
+      "data_path": "/userhome/jeon_mg/workspace/project/CNN_NF2/NF2_compare/data/11158_nf2_input/input_0.npy",
       "slices": [0],
       "height_mapping": {
         "z":  [0.0]

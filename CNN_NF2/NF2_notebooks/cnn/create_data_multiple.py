@@ -2,7 +2,8 @@ from tool.load import *
 from tool.evaluate import *
 from tool.dataset import *
 
-noaas = [11302, 11429, 11515, 12192, 12673]
+# noaas = [11302, 11429, 11515, 12192, 12673]
+noaas = [12673]
 
 # b_norm = 2500
 
